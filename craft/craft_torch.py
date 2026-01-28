@@ -171,7 +171,10 @@ class Craft(BaseConceptExtractor):
         strides = int(self.patch_size * 0.80)
 
         patches = torch.nn.functional.unfold(inputs, kernel_size=self.patch_size, stride=strides)
-        patches = patches.transpose(1, 2).contiguous().view(-1, 3, self.patch_size, self.patch_size)
+
+        #Add num_channels to use black and white images
+        num_channels = inputs.shape[1]
+        patches = patches.transpose(1, 2).contiguous().view(-1, num_channels, self.patch_size, self.patch_size)
 
         # encode the patches and obtain the activations
         activations = _batch_inference(self.input_to_latent, patches, self.batch_size, image_size, 
